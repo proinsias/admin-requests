@@ -16,34 +16,30 @@ def feedstock_token_exists(feedstock_name):
     r = requests.get(
         "https://api.github.com/repos/conda-forge/"
         "feedstock-tokens/contents/tokens/%s.json" % (feedstock_name),
-        headers={"Authorization": "token %s" % os.environ["GITHUB_TOKEN"]},
+        headers={"Authorization": f'token {os.environ["GITHUB_TOKEN"]}'},
     )
-    if r.status_code != 200:
-        return False
-    else:
-        return True
+    return r.status_code == 200
 
 
 def get_feedstock_token_repo():
     global FEEDSTOCK_TOKENS_REPO
-    if FEEDSTOCK_TOKENS_REPO is None and "GITHUB_TOKEN" in os.environ:
-        FEEDSTOCK_TOKENS_REPO = (
-            github
-            .Github(os.environ["GITHUB_TOKEN"])
-            .get_repo("conda-forge/feedstock-tokens")
-        )
-        return FEEDSTOCK_TOKENS_REPO
-    else:
+    if FEEDSTOCK_TOKENS_REPO is not None or "GITHUB_TOKEN" not in os.environ:
         raise RuntimeError(
             "Cannot delete feedstock token since "
             "we do not have a github token!"
         )
+    FEEDSTOCK_TOKENS_REPO = (
+        github
+        .Github(os.environ["GITHUB_TOKEN"])
+        .get_repo("conda-forge/feedstock-tokens")
+    )
+    return FEEDSTOCK_TOKENS_REPO
 
 
 def delete_feedstock_token(feedstock_name):
     feedstock_tokens_repo = get_feedstock_token_repo()
 
-    token_file = "tokens/%s.json" % feedstock_name
+    token_file = f"tokens/{feedstock_name}.json"
     fn = feedstock_tokens_repo.get_contents(token_file)
     feedstock_tokens_repo.delete_file(
         token_file,
@@ -60,7 +56,7 @@ def reset_feedstock_token(name, skips=None):
     if "travis" not in skips:
         # test to make sure travis ci api is working
         # if not skip migration
-        repo_info = travis_get_repo_info("conda-forge", name + "-feedstock")
+        repo_info = travis_get_repo_info("conda-forge", f"{name}-feedstock")
         if not repo_info:
             raise RuntimeError("Travis-CI API token is not working!")
 
@@ -71,11 +67,11 @@ def reset_feedstock_token(name, skips=None):
     )
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        feedstock_dir = os.path.join(tmpdir, name + "-feedstock")
+        feedstock_dir = os.path.join(tmpdir, f"{name}-feedstock")
         os.makedirs(feedstock_dir)
 
-        if feedstock_token_exists(name + "-feedstock"):
-            delete_feedstock_token(name + "-feedstock")
+        if feedstock_token_exists(f"{name}-feedstock"):
+            delete_feedstock_token(f"{name}-feedstock")
 
         subprocess.check_call(
             ['conda', 'smithy', 'generate-feedstock-token',
@@ -136,10 +132,7 @@ def run(request):
         try:
             reset_feedstock_token(pkg, skips=skips)
         except Exception as e:
-            print(
-                "failed to reset token for '%s': %s" % (pkg, repr(e)),
-                flush=True,
-            )
+            print(f"failed to reset token for '{pkg}': {repr(e)}", flush=True)
             pkgs_to_do_again.append(pkg)
 
     if pkgs_to_do_again:

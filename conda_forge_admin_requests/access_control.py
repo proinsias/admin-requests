@@ -255,7 +255,7 @@ def check(request: Dict[str, Any]) -> None:
         for resource in resources:
             assert resource.startswith("cirun-openstack")
 
-    if action == "travis":
+    elif action == "travis":
         assert not request.get("revoke", False)
 
 

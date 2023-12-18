@@ -42,10 +42,7 @@ Hi! Our weekly job found a non-zero repodata patch diff:
     dstr = datetime.date.today().strftime("%Y-%m-%d")
     gh = github.Github(os.environ['GITHUB_TOKEN'])
     repo = gh.get_repo("conda-forge/conda-forge-repodata-patches-feedstock")
-    repo.create_issue(
-        "[%s] non-zero repodata patch diff" % dstr,
-        body=msg,
-    )
+    repo.create_issue(f"[{dstr}] non-zero repodata patch diff", body=msg)
 
 
 def update_repodata_patches(dry_run):
@@ -93,9 +90,5 @@ def update_repodata_patches(dry_run):
 if __name__ == "__main__":
     if len(sys.argv) > 2:
         raise RuntimeError("Need 0 or 1 arguments")
-    if len(sys.argv) == 2 and sys.argv[1] == '--dry-run':
-        dry_run = True
-    else:
-        dry_run = False
-
+    dry_run = len(sys.argv) == 2 and sys.argv[1] == '--dry-run'
     update_repodata_patches(dry_run)

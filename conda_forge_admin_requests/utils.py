@@ -3,7 +3,7 @@ import os
 SMITHY_CONF = os.path.expanduser('~/.conda-smithy')
 
 def _write_token(name, token):
-    with open(os.path.join(SMITHY_CONF, name + '.token'), 'w') as fh:
+    with open(os.path.join(SMITHY_CONF, f'{name}.token'), 'w') as fh:
         fh.write(token)
 
 

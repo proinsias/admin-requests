@@ -22,11 +22,7 @@ def check(request):
     action = request["action"]
     assert action in ("broken", "not_broken")
 
-    if action == "broken":
-        channel = "conda-forge"
-    else:
-        channel = "conda-forge/label/broken"
-
+    channel = "conda-forge" if action == "broken" else "conda-forge/label/broken"
     assert "packages" in request
     pkgs = request["packages"]
 
@@ -47,19 +43,15 @@ def check(request):
 def mark_broken_pkg(pkg, action):
     plat, name, ver, build = split_pkg(pkg)
 
-    if action == "broken":
-        func = requests.post
-    else:
-        func = requests.delete
-
+    func = requests.post if action == "broken" else requests.delete
     r = func(
         "https://api.anaconda.org/channels/conda-forge/broken",
-        headers={'Authorization': 'token {}'.format(os.environ["BINSTAR_TOKEN"])},
+        headers={'Authorization': f'token {os.environ["BINSTAR_TOKEN"]}'},
         json={
             "basename": pkg,
             "package": name,
             "version": ver,
-        }
+        },
     )
     if r.status_code != 201:
         print(f"        could not mark {action}", flush=True)
@@ -73,11 +65,11 @@ def run(request):
     if "BINSTAR_TOKEN" not in os.environ:
         return copy.deepcopy(request)
 
-    packages = request["packages"]
     action = request["action"]
 
     pkgs_to_try_again = []
     did_any = False
+    packages = request["packages"]
     for package in packages:
         print(f"working on package {package}", flush=True)
         success = mark_broken_pkg(package, action)
@@ -104,11 +96,12 @@ def run(request):
             )
 
             success_pkgs = set(packages) - set(pkgs_to_try_again)
-            fstr = " ".join(f for f in success_pkgs)
+            fstr = " ".join(success_pkgs)
             subprocess.check_call(
-                "git commit --allow-empty -am 'resync repo data "
-                "for broken/notbroken packages %s'" % fstr,
-                cwd=os.path.join(tmpdir, "conda-forge-repodata-patches-feedstock"),
+                f"git commit --allow-empty -am 'resync repo data for broken/notbroken packages {fstr}'",
+                cwd=os.path.join(
+                    tmpdir, "conda-forge-repodata-patches-feedstock"
+                ),
                 shell=True,
             )
 
