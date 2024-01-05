@@ -2,7 +2,7 @@ repo_name: proinsias/admin-requests
 report_id: fccba7501336e576124dd67cd39dc9e3
 version: 0.1
 repo_type: Public
-timestamp: '2023-12-18T14:50:20+00:00'
+timestamp: '2024-01-05T08:47:06+00:00'
 requested_by: conda-forge-curator[bot]
 provider: github
 branch: main
@@ -17,6 +17,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/993/pUBY5pVj.png
+  detection_source_url: https://github.com/proinsias/admin-requests
   detection_source: Repo Metadata
 - name: Git
   description: Fast, scalable, distributed revision control system
@@ -26,6 +27,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Version Control System
   image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/proinsias/admin-requests
   detection_source: Repo Metadata
 - name: GitHub Actions
   description: Automate your workflow from idea to production
@@ -35,6 +37,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Continuous Integration
   image_url: https://img.stackshare.io/service/11563/actions.png
+  detection_source_url: https://github.com/proinsias/admin-requests/blob/main/.github/workflows/create_feedstocks.yml
   detection_source: ".github/workflows/create_feedstocks.yml"
   last_updated_by: beckermr
   last_updated_on: 2023-01-08 20:15:37.000000000 Z
@@ -46,6 +49,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Hosted Package Repository
   image_url: https://img.stackshare.io/service/12572/-RIWgodF_400x400.jpg
+  detection_source_url: https://github.com/proinsias/admin-requests/blob/main/environment.yml
   detection_source: environment.yml
   last_updated_by: Isuru Fernando
   last_updated_on: 2020-02-03 19:02:02.000000000 Z
@@ -58,6 +62,7 @@ tools:
   category: Application Utilities
   sub_category: Data Transfer
   image_url: https://img.stackshare.io/service/10242/default_10e3fd58c910dc0c4241bc273a7235a0aa4197dd.png
+  detection_source_url: https://github.com/proinsias/admin-requests/blob/main/environment.yml
   detection_source: environment.yml
   last_updated_by: Matthew R. Becker
   last_updated_on: 2021-03-11 15:17:53.000000000 Z
